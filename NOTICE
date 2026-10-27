@@ -1,0 +1,11 @@
+LiDAR Arm Bench
+New implementation copyright 2026 Syed Abdul Muqeeth.
+Licensed under the Apache License, Version 2.0; see LICENSE.
+
+The repository previously contained two color-sensor/servo sketches. Their
+original history and original Apache-2.0 license are preserved on the remote
+archive/before-lidar-arm-2026-10-27 branch. No code from those sketches is
+represented as a newly built arm controller.
+
+Method references in README.md are explanatory sources. Their software is not
+bundled. Generated cover artwork has separate provenance in docs/images/.

@@ -1,0 +1,13 @@
+scene,seed,status,inputPoints,filteredPoints,voxelPoints,clusters,candidates,neighborComparisons,collisionEvaluations,method,waypoints,frames,durationSeconds,maxVelocityObserved,maxAccelerationObserved
+open,1,planned,2126,23,23,1,1,289,178,direct,2,61,3,0.986371,1.011895
+open,2,planned,2126,23,23,1,1,269,178,direct,2,61,3,0.986713,1.012246
+open,3,planned,2126,23,23,1,1,277,178,direct,2,61,3,0.987971,1.013536
+detour,1,planned,1774,24,24,2,1,194,414,lift,4,107,5.3,0.990227,1.787217
+detour,2,planned,1774,24,24,2,1,208,414,lift,4,107,5.3,0.988159,1.787217
+detour,3,planned,1774,24,24,2,1,194,414,lift,4,107,5.3,0.988773,1.787217
+forbidden,1,goal_in_collision,2126,23,23,1,1,289,2,,0,0,,,
+forbidden,2,goal_in_collision,2126,23,23,1,1,269,2,,0,0,,,
+forbidden,3,goal_in_collision,2126,23,23,1,1,277,2,,0,0,,,
+far,1,unreachable,1672,20,20,1,1,138,0,,0,0,,,
+far,2,unreachable,1672,20,20,1,1,148,0,,0,0,,,
+far,3,unreachable,1672,20,20,1,1,154,0,,0,0,,,

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "kind": "preliminary software collision geometry, not manufacturing CAD",
+  "units": "m",
+  "angleUnits": "rad",
+  "frame": "right-handed base, z up",
+  "jointAxes": [
+    "base z yaw",
+    "yaw-rotated negative-y pitch",
+    "same pitch axis",
+    "same pitch axis"
+  ],
+  "lengths": [
+    0.3,
+    0.25,
+    0.1
+  ],
+  "height": 0.15,
+  "radii": [
+    0.025,
+    0.022,
+    0.02,
+    0.035
+  ],
+  "limits": [
+    [
+      -2.6179938779914944,
+      2.6179938779914944
+    ],
+    [
+      -1.0471975511965976,
+      2.0943951023931953
+    ],
+    [
+      -2.356194490192345,
+      2.356194490192345
+    ],
+    [
+      -1.9198621771937625,
+      1.9198621771937625
+    ]
+  ],
+  "home": [
+    0,
+    1.3962634015954636,
+    -1.5707963267948966,
+    0.17453292519943295
+  ],
+  "fixture": {
+    "min": [
+      -0.06,
+      -0.06,
+      0
+    ],
+    "max": [
+      0.06,
+      0.06,
+      0.1
+    ]
+  },
+  "physicalTests": "pending"
+}
