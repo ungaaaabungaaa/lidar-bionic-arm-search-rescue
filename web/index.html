@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Reach / LiDAR arm bench</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="wordmark" href="/">REACH<span> / ARM BENCH</span></a
+      ><span class="tag">SIMULATION · v0.1</span>
+    </header>
+    <main>
+      <section class="intro">
+        <p class="eyebrow">PERCEPTION → PLANNING → REPLAY</p>
+        <h1>A clear path<br />before a reach.</h1>
+        <p>
+          Inspect a synthetic scan, find a small object, and plan a checked pregrasp motion. Four
+          joints. One honest view of what works.
+        </p>
+      </section>
+      <section class="lab" aria-label="Interactive arm simulation">
+        <aside>
+          <form id="config">
+            <h2>Set the bench</h2>
+            <label for="scene">Scene</label
+            ><select id="scene">
+              <option value="open">01 / Open reach</option>
+              <option value="detour">02 / Raised fixture</option>
+              <option value="forbidden">03 / Keep-out volume</option>
+              <option value="far">04 / Beyond reach</option>
+            </select>
+            <p id="scene-help" class="hint"></p>
+            <div class="fields">
+              <div>
+                <label for="seed">Noise seed</label
+                ><input
+                  id="seed"
+                  type="number"
+                  min="0"
+                  max="4294967295"
+                  step="1"
+                  value="1"
+                  required
+                />
+              </div>
+              <div>
+                <label for="budget">Pose checks</label
+                ><input
+                  id="budget"
+                  type="number"
+                  min="1"
+                  max="25000"
+                  step="1"
+                  value="25000"
+                  required
+                />
+              </div>
+            </div>
+            <button class="primary" id="run">Run scan & plan <span>↗</span></button>
+          </form>
+          <div class="model-note">
+            <h3>What the model knows</h3>
+            <p>
+              Point clouds select a target. Separately supplied obstacle boxes and keep-out volumes
+              constrain the route. Unseen space is not inferred safe.
+            </p>
+            <p>
+              Replay is a kinematic reference. No device is connected. Contact, grip forces and
+              rescue operations are not modeled.
+            </p>
+          </div>
+        </aside>
+        <div class="stage">
+          <div class="stage-heading">
+            <h2>Bench view</h2>
+            <span id="status" role="status" aria-live="polite">Ready to run</span>
+          </div>
+          <canvas
+            id="view"
+            width="1100"
+            height="650"
+            role="img"
+            aria-label="Projected arm, observed point cloud, obstacle boxes and target. Joint positions are also in the table below."
+          ></canvas>
+          <div class="legend">
+            <span><i class="ink"></i>Arm</span><span><i class="orange"></i>Scan / target</span
+            ><span><i class="grey"></i>Supplied geometry</span
+            ><span><i class="red"></i>Virtual keep-out</span>
+          </div>
+          <div class="camera">
+            <label for="azimuth"
+              >Orbit <input id="azimuth" type="range" min="-180" max="180" value="-55" /></label
+            ><label for="elevation"
+              >Elevation <input id="elevation" type="range" min="10" max="80" value="28"
+            /></label>
+          </div>
+          <div class="transport">
+            <button id="play" type="button" disabled>Play</button
+            ><button id="step" type="button" disabled>Step</button
+            ><label for="frame">Frame <output id="frame-label">—</output></label
+            ><input
+              id="frame"
+              type="range"
+              min="0"
+              max="0"
+              value="0"
+              disabled
+              aria-label="Replay frame"
+            /><output id="time">0.00 s</output>
+          </div>
+          <p id="outcome" class="outcome">Select a scene and run the bench.</p>
+        </div>
+      </section>
+      <section class="evidence" aria-label="Measured simulation results">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">MEASURED IN THIS RUN</p>
+            <h2>Inspect the evidence.</h2>
+          </div>
+          <button id="export" type="button" disabled>Export report ↓</button>
+        </div>
+        <div class="stats">
+          <div><span>Observed / voxel points</span><strong id="points">—</strong></div>
+          <div><span>Route / pose checks</span><strong id="route">—</strong></div>
+          <div><span>Reference duration</span><strong id="duration">—</strong></div>
+          <div>
+            <span>Peak speed / acceleration</span><strong id="rates">—</strong
+            ><small>rad/s · rad/s²</small>
+          </div>
+        </div>
+        <div class="tables">
+          <div>
+            <h3>Joint reference</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Joint</th>
+                  <th scope="col">rad</th>
+                  <th scope="col">rad/s</th>
+                  <th scope="col">rad/s²</th>
+                </tr>
+              </thead>
+              <tbody id="joints"></tbody>
+            </table>
+            <p id="tcp" class="hint">TCP position will appear here.</p>
+          </div>
+          <div>
+            <h3>Candidate review</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Cluster</th>
+                  <th scope="col">Points</th>
+                  <th scope="col">Result</th>
+                </tr>
+              </thead>
+              <tbody id="candidates"></tbody>
+            </table>
+            <p class="hint">
+              The target is the visible bounds centre, 0.12 m above its observed top. This is a
+              stand-off pose, not a grasp.
+            </p>
+          </div>
+        </div>
+        <details class="packet">
+          <summary>Inspect the control text format</summary>
+          <p class="hint">
+            Create a text frame from the displayed joint pose. This does not open a port or move a
+            device. ARM must match a known current pose; this preview does not confirm physical
+            readiness.
+          </p>
+          <form id="packet">
+            <div class="fields">
+              <div>
+                <label for="sequence">Sequence</label
+                ><input
+                  id="sequence"
+                  type="number"
+                  min="0"
+                  max="65535"
+                  step="1"
+                  value="1"
+                  required
+                />
+              </div>
+              <div>
+                <label for="command">Request</label
+                ><select id="command">
+                  <option value="S">STOP</option>
+                  <option value="A">ARM</option>
+                  <option value="M">SETPOINT</option>
+                </select>
+              </div>
+              <div>
+                <label for="opening">Opening (mm)</label
+                ><input id="opening" type="number" min="0" max="80" step="1" value="40" required />
+              </div>
+              <div>
+                <label for="lease">Lease (ms)</label
+                ><input
+                  id="lease"
+                  type="number"
+                  min="100"
+                  max="500"
+                  step="1"
+                  value="300"
+                  required
+                />
+              </div>
+            </div>
+            <button type="submit">Build text frame</button>
+            <pre id="packet-text" aria-live="polite">No frame built.</pre>
+          </form>
+        </details>
+      </section>
+      <section class="limits">
+        <p class="eyebrow">BENCH BOUNDARIES</p>
+        <h2>Useful software.<br />Physical work still ahead.</h2>
+        <p>
+          This lab uses four rotational joints and a spherical hand proxy. It has no person
+          detector, five-finger mechanics, live LiDAR driver, motor controller, or force feedback.
+          The conservative motion model checks full joint-motion segments, with finite work limits.
+          A failed search does not prove that no route exists.
+        </p>
+      </section>
+    </main>
+    <footer>
+      REACH / LiDAR Bionic Arm for Search & Rescue
+      <span>Local, offline after launch · No analytics</span>
+    </footer>
+    <script type="module" src="/app.mjs"></script>
+  </body>
+</html>
