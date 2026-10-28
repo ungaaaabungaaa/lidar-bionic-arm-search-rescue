@@ -71,3 +71,7 @@ The clustering approach follows the connected-neighbor idea in the [official PCL
 ## License and repository history
 
 The original Apache-2.0 [LICENSE](LICENSE) is retained. New source uses the same license; see [NOTICE](NOTICE). The two earlier color-sensor sketches are preserved with all original history on `archive/before-lidar-arm-2026-10-27` at `7c8a9005c2cc54d0f9f4b47e0c0cafdc9c199cb5`. They are unrelated to the new arm implementation. The approved rename retains repository ID 769099550 and 18 stars observed at rename. This implementation was built on 27 October 2026; earlier stars/history are not evidence of earlier arm work. [Cover provenance](docs/images/cover-provenance.json) records the approved generated artwork. The portfolio site was not changed.
+
+### Occluded-object experiment
+
+Run `node scripts/cli.mjs run --scene occluded --seed 1`. This CLI/library scene places a wide panel between the sensor and the small object. The panel has visible returns but does not meet the small-object candidate rules, so the report contains `no_candidates` and no motion reference. At zero simulated noise, removing the hidden object leaves the scan exactly unchanged. This illustrates the limit of first-return observations; missing points do not prove unseen space is empty. Planning still requires separately supplied conservative obstacle envelopes. This is a synthetic case, with no physical sensing or rescue result.

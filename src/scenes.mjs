@@ -31,6 +31,15 @@ export const SCENES = Object.freeze({
     sensor: [0, -0.65, 0.6],
     aim: [0.44, -0.01, 0.1],
   }),
+  occluded: Object.freeze({
+    name: 'Occluded small object',
+    description:
+      'A front panel hides the small object. First-return observations do not reveal the object or prove unseen space is empty.',
+    objects: [box([0.05, -0.3, 0.025], [0.65, -0.28, 0.7]), small],
+    keepOut: [],
+    sensor: [0, -0.65, 0.6],
+    aim: [0.44, -0.01, 0.1],
+  }),
   far: Object.freeze({
     name: 'Beyond reach',
     description: 'The scan sees an object outside the arm kinematic workspace.',
