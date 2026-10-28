@@ -82,7 +82,10 @@ export class SafetyLatch {
     };
   }
   tick(now) {
-    if (!uint(now, 0xffffffff)) throw Error('Clock must be uint32 milliseconds.');
+    if (!uint(now, 0xffffffff)) {
+      this.stop('invalid_clock');
+      throw Error('Clock must be uint32 milliseconds.');
+    }
     if (this.armed && (now - this.acceptedAt) >>> 0 >= this.lease) this.stop('lease_expired');
     return this.snapshot();
   }
