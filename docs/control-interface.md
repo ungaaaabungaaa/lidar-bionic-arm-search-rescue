@@ -34,6 +34,7 @@ The `SafetyLatch` class is a setpoint emulator, not firmware or a tracking contr
 - Boot has no output. ARM requires a supplied known current pose and a matching target within 0.01 rad per joint. The simulator cannot measure a physical current pose.
 - ARM/M accept forward sequence deltas 1..32767 modulo 65536. Duplicate/backward/ambiguous-half-range sequence input drops output. Accepted sequence history remains after a fault.
 - Invalid/oversized frames drop output. M while unarmed drops output. STOP drops output even with a stale sequence; it cannot start motion.
+- Invalid clock input clears the armed state and output before throwing; sequence history is retained and a fresh ARM is required. The emulator cannot evaluate a lease without a valid clock.
 - The uint32 millisecond clock handles wrap. Lease expiry is checked **before** processing another frame. A late M cannot revive an expired latch; explicit fresh ARM is required.
 - Output is a copied target pose/opening only. No acceleration control, servo pulses, feedback, inverse dynamics, homing or port is implemented here. The trajectory module separately creates a checked kinematic reference; arbitrary protocol targets are not implicitly collision checked.
 

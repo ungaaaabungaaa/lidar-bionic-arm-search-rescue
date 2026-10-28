@@ -48,3 +48,16 @@ test('freshness, STOP, lease expiry before late commands and uint32 clock wrap f
   assert.equal(latch.receive(packet(0, 'S'), 0x123).output, null);
   assert.throws(() => latch.tick(-1));
 });
+test('invalid clock input clears a latched output before rejecting and requires re-arm', () => {
+  for (const now of [-1, 0.5, 0x100000000, NaN, Infinity]) {
+    for (const method of ['tick', 'receive']) {
+      const latch = new SafetyLatch(MODEL.home);
+      assert.equal(latch.receive(packet(1), 0).armed, true);
+      assert.throws(() => method === 'tick' ? latch.tick(now) : latch.receive(packet(2, 'M'), now), /Clock/);
+      assert.deepEqual(latch.snapshot(), { armed: false, output: null, reason: 'invalid_clock' });
+      assert.equal(latch.sequence, 1);
+      assert.equal(latch.receive(packet(2, 'M'), 1).reason, 'unarmed');
+      assert.equal(latch.receive(packet(3), 2).armed, true);
+    }
+  }
+});
