@@ -42,6 +42,6 @@ The browser and CLI only generate text. Do not route it to an unreviewed actuato
 
 ## Library and result structure
 
-`runBench({scene,seed,poseBudget,dt})` supports four fixed scenes, uint32 seeds,1..25000 global pose checks and dt0.02..0.1s. Reference limits are1rad/s and2rad/s². `planMotion` additionally bounds total RRT nodes to 1000, iterations to 1000 and accepted waypoints to 64. Each edge has at most512 certified subsegments. Reference output is limited to 3001 frames and the serialized run report to 3 MiB.
+`runBench({scene,seed,poseBudget,dt})` supports five fixed scenes, uint32 seeds,1..25000 global pose checks and dt0.02..0.1s. Reference limits are1rad/s and2rad/s². `planMotion` additionally bounds total RRT nodes to 1000, iterations to 1000 and accepted waypoints to 64. Each edge has at most512 certified subsegments. Reference output is limited to 3001 frames and the serialized run report to 3 MiB.
 
 Reports include configuration/assumptions, transformed voxel points, clusters, candidate targets/statuses, supplied obstacles/virtual keep-outs, accepted plan/reference if any, and actual operation counts. `planned` is the only outcome with a motion reference. Other outcomes are no_candidates, unreachable, start_in_collision, goal_in_collision and planning_budget. The latter includes search, node, edge and global work limits; it is not proof of geometric impossibility. `pending` candidates after a selected target were not evaluated. Duration is analytic reference time; it does not measure compute latency.

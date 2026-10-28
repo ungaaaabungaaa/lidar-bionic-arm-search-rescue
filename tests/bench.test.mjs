@@ -48,3 +48,21 @@ test('bench seed is reproducible; low global budget rejects rather than emitting
   ])
     assert.throws(() => runBench(config));
 });
+test('an occluded small object is absent from first-return scans and emits no motion', async () => {
+  const { sceneByName } = await import('../src/scenes.mjs');
+  const { simulateScan } = await import('../src/cloud.mjs');
+  const scene = sceneByName('occluded');
+  assert.equal(scene.objects.length,2);
+  const hidden = simulateScan(scene,{noise:0});
+  const panelOnly = simulateScan({...scene,objects:[scene.objects[0]]},{noise:0});
+  assert.deepEqual(hidden,panelOnly);
+  for(const seed of [1,2,3]){
+    const report=runBench({scene:'occluded',seed});
+    assert.equal(report.metrics.status,'no_candidates');
+    assert.ok(report.metrics.inputPoints>0);
+    assert.ok(report.clusters.length>0);
+    assert.equal(report.candidates.length,0);
+    assert.equal(report.reference,null);
+    assert.equal(report.metrics.collisionEvaluations,0);
+  }
+});
